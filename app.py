@@ -1,455 +1,399 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
-# Page configuration
+# Page configuration - No Sidebar (collapsed & hidden via CSS)
 st.set_page_config(
     page_title="COSMOS Platforma | Inteligencija za bolje odluke",
     page_icon="🌌",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Custom CSS styling for premium look & feel
+# Custom CSS for landing page styling (100% Serbian, no sidebar, modern luxury aesthetic)
 st.markdown("""
 <style>
-    /* Main background and fonts */
+    /* Hide Streamlit Sidebar Completely */
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    
+    /* Main container background */
     .stApp {
         background-color: #0b132b;
         color: #e0e1dd;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
-    /* Header hero styling */
-    .hero-container {
-        background: linear-gradient(135deg, #1c2541 0%, #0b132b 60%, #3a506b 100%);
-        padding: 3rem 2rem;
-        border-radius: 16px;
-        border: 1px solid rgba(0, 180, 216, 0.2);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        margin-bottom: 2rem;
+    /* Top Header / Navigation Bar */
+    .top-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: #1c2541;
+        border-bottom: 1px solid rgba(0, 180, 216, 0.2);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+    .brand-logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #ffffff;
+    }
+    .brand-slogan {
+        font-size: 0.85rem;
+        color: #d4af37;
+        font-weight: 600;
+    }
+    .cta-button {
+        background: linear-gradient(90deg, #00b4d8 0%, #0077b6 100%);
+        color: white !important;
+        padding: 0.6rem 1.4rem;
+        border-radius: 30px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+    }
+    
+    /* Hero Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, #1c2541 0%, #0b132b 60%, #1e3a8a 100%);
+        padding: 3.5rem 2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 180, 216, 0.3);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         text-align: center;
+        margin-bottom: 2.5rem;
     }
     .hero-title {
-        font-size: 3.2rem;
-        font-weight: 800;
+        font-size: 3.5rem;
+        font-weight: 900;
         background: linear-gradient(90deg, #ffffff 0%, #48cae4 50%, #d4af37 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
         letter-spacing: -1px;
     }
     .hero-subtitle {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         color: #90e0ef;
-        font-weight: 400;
-        margin-bottom: 1.5rem;
+        max-width: 850px;
+        margin: 0 auto 1.5rem auto;
+        line-height: 1.6;
     }
-    .hero-slogan {
-        font-size: 1.1rem;
+    .hero-slogan-bar {
+        font-size: 1.05rem;
         color: #d4af37;
-        font-weight: 600;
-        letter-spacing: 1px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
         text-transform: uppercase;
     }
-    
-    /* Card styling */
+
+    /* Cards */
     .cosmos-card {
         background: #1c2541;
-        padding: 1.5rem;
-        border-radius: 12px;
+        padding: 1.8rem;
+        border-radius: 14px;
         border: 1px solid rgba(255, 255, 255, 0.08);
-        margin-bottom: 1.2rem;
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        margin-bottom: 1.5rem;
+        height: 100%;
     }
-    .cosmos-card:hover {
-        border-color: #00b4d8;
-        transform: translateY(-2px);
-    }
-    .card-title {
+    .card-title-cyan {
         color: #48cae4;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
     }
-    .card-gold-title {
+    .card-title-gold {
         color: #d4af37;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Pillar badge */
-    .pillar-badge {
-        display: inline-block;
-        background: rgba(0, 180, 216, 0.15);
-        color: #48cae4;
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
     }
     
     /* Highlight box */
-    .highlight-box {
-        background: rgba(212, 175, 55, 0.1);
-        border-left: 4px solid #d4af37;
-        padding: 1rem 1.5rem;
-        border-radius: 4px;
-        margin: 1.5rem 0;
+    .quote-box {
+        background: rgba(212, 175, 55, 0.08);
+        border-left: 5px solid #d4af37;
+        padding: 1.2rem 1.8rem;
+        border-radius: 6px;
+        margin: 1.8rem 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
     }
 
-    /* Metric styling */
+    /* Metric overrides */
     div[data-testid="stMetricValue"] {
         color: #48cae4 !important;
-        font-weight: 700;
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
     }
-    
-    /* Sidebar styling */
-    section[data-testid="stSidebar"] {
-        background-color: #070d1e;
-        border-right: 1px solid rgba(255,255,255,0.05);
+    div[data-testid="stMetricLabel"] {
+        color: #e0e1dd !important;
+        font-size: 1rem !important;
+    }
+
+    /* Custom Footer */
+    .footer {
+        text-align: center;
+        padding: 2.5rem;
+        margin-top: 3rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        color: #8d99ae;
+        font-size: 0.9rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Navigation Sidebar
-with st.sidebar:
-    st.image("https://img.icons8.com/color/96/space.png", width=64)
-    st.title("COSMOS")
-    st.caption("Inteligencija za bolje odluke")
-    st.divider()
-    
-    page = st.radio(
-        "Navigacija",
-        [
-            "🏠 Početna",
-            "🌌 O Platformi COSMOS",
-            "🤝 SIMPA (Socijalna Inkluzija)",
-            "🏔️ ORDO (Razvoj Destinacija)",
-            "📜 10 Načela & Standardi",
-            "👥 Tim & Ekosistem",
-            "🧮 Interaktivni Simulatori",
-            "✉️ Kontakt & Demo"
-        ]
-    )
-    
-    st.divider()
-    st.info("💡 **COSMOS Web App**  \nPripremljeno za objavu na *Streamlit Community Cloud*.")
+# Top Navigation / Header
+st.markdown("""
+<div class="top-header">
+    <div>
+        <div class="brand-logo">COSMOS</div>
+        <div class="brand-slogan">Inteligencija za bolje odluke</div>
+    </div>
+    <div>
+        <a class="cta-button" href="#kontakt">Zatražite Demo</a>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-# ==================== PAGE 1: POČETNA ====================
-if page == "🏠 Početna":
+# Hero Section
+st.markdown("""
+<div class="hero-banner">
+    <div class="hero-title">COSMOS PLATFORMA</div>
+    <div class="hero-subtitle">Jedinstvena platforma za inteligentno odlučivanje, održivi razvoj i dokazima zasnovano upravljanje složenim društvenim i ekonomskim procesima</div>
+    <div class="hero-slogan-bar">Podaci • Znanje • Razumevanje • Odgovornost • Bolje Odluke</div>
+</div>
+""", unsafe_allow_html=True)
+
+# Key Metrics Row
+col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+with col_m1:
+    st.metric(label="Naučno-istraživački rad", value="25+ Godina", delta="Četvrt veka razvoja")
+with col_m2:
+    st.metric(label="Standardizovani indikatori", value="500+", delta="U 10+ javnih sektora")
+with col_m3:
+    st.metric(label="Efikasnost upravljanja", value="15–30%", delta="Društveni i finansijski efekat")
+with col_m4:
+    st.metric(label="Tehnološka spremnost", value="TRL 8", delta="Provereno u praksi")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Top Navigation Tabs for Landing Page Sections
+tab_overview, tab_simpa, tab_ordo, tab_principles, tab_team, tab_contact = st.tabs([
+    "🌌 O Platformi",
+    "🤝 SIMPA Modul",
+    "🏔️ ORDO Modul",
+    "📜 10 Načela",
+    "👥 Tim & Vizija",
+    "✉️ Kontakt & Demo"
+])
+
+# ==================== SECTION 1: O PLATFORMI ====================
+with tab_overview:
+    st.subheader("💡 Ideja i Vizija Platforme COSMOS")
+    
     st.markdown("""
-    <div class="hero-container">
-        <div class="hero-title">COSMOS PLATFORMA</div>
-        <div class="hero-subtitle">Platforma za inteligentno odlučivanje, održivi razvoj i dokazima zasnovano upravljanje</div>
-        <div class="hero-slogan">Podaci • Znanje • Razumevanje • Odgovornost • Bolje Odluke</div>
+    <div class="quote-box">
+        <b>Red u haosu:</b> Naziv <i>COSMOS</i> potiče od antičkog shvatanja kosmosa kao uređene celine u kojoj svaka pojava dobija svoje mesto i značenje, u suprotnosti sa haosom. 
+        COSMOS razvija metodologiju koja različite izvore znanja organizuje u jedinstven sistem inteligencije odlučivanja.
     </div>
     """, unsafe_allow_html=True)
-    
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric(label="Godina naučnog rada", value="25+", delta="Četvrt veka iskustva")
-    with col2:
-        st.metric(label="Standardizovanih indikatora", value="500+", delta="U 10+ domena")
-    with col3:
-        st.metric(label="Povećanje efikasnosti", value="15-30%", delta="Društveni & finansijski efekat")
-    with col4:
-        st.metric(label="Nivo tehnološke spremnosti", value="TRL 8", delta="Dokazano u praksi")
 
-    st.markdown("### 🌟 Specijalizovani alati platforme COSMOS")
-    
-    c1, c2 = st.columns(2)
-    with c1:
+    c_left, c_right = st.columns(2)
+    with c_left:
         st.markdown("""
         <div class="cosmos-card">
-            <div class="card-title">🤝 SIMPA</div>
-            <p><b>Sistem inteligencije za planiranje, monitoring i evaluaciju javnih politika socijalne zaštite i inkluzije.</b></p>
-            <p>Povezuje administrativne podatke centara za socijalni rad, SOZIS-a i lokalnih samouprava u jedinstven analitički okvir koji pretvara podatke u znanje i pravednije usluge za građane.</p>
-            <span class="pillar-badge">LISI Indeks</span>
-            <span class="pillar-badge">Preventivno delovanje</span>
-            <span class="pillar-badge">SOZIS Nadogradnja</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with c2:
-        st.markdown("""
-        <div class="cosmos-card">
-            <div class="card-gold-title">🏔️ ORDO</div>
-            <p><b>Sistem inteligencije za razvoj, upravljanje i unapređenje turističkih destinacija.</b></p>
-            <p>Objedinjuje podatke o prostoru, turizmu, lokalnoj privredi, infrastrukturi i kulturnom nasleđu radi donošenja održivih i merljivih investicionih i razvojnih odluka.</p>
-            <span class="pillar-badge">5 Stubova Odlučivanja</span>
-            <span class="pillar-badge">Virtuelni Scenariji</span>
-            <span class="pillar-badge">Održivi Turizam</span>
+            <div class="card-title-cyan">Izazov Savremenog Upravljanja</div>
+            <p>Savremene institucije i organizacije raspolažu ogromnim količinama podataka. Međutim, <b>paradoks našeg vremena jeste u tome što nikada nismo znali više, a često smo sigurni manje</b>.</p>
+            <p>Količina informacija raste mnogo brže od naše sposobnosti da ih povežemo u smislenu celinu. Između podataka i odluka otvorio se prostor koji nije moguće ispuniti samo bržim računarima ili složenijim algoritmima.</p>
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("---")
+    with c_right:
+        st.markdown("""
+        <div class="cosmos-card">
+            <div class="card-title-gold">COSMOS Rešenje</div>
+            <p>COSMOS polazi od pretpostavke: <b>razumevanje prethodi odlučivanju</b>. Veštačka inteligencija u COSMOS-u je sredstvo koje pomaže da se prepoznaju obrasci, procene posledice različitih scenarija i smanji neizvesnost.</p>
+            <p>Konačna odgovornost za odluku uvek ostaje u rukama čoveka. Tehnologija proširuje ljudsku sposobnost razumevanja.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("### 🧩 5 Stubova Inteligencije Odlučivanja")
-    
     col_p1, col_p2, col_p3, col_p4, col_p5 = st.columns(5)
     with col_p1:
-        st.markdown("**1. Podaci**  \nPolazna osnova iz svih relevantnih izvora (prostorni, privredni, demografski).")
+        st.markdown("#### 1. Podaci\nPolazna osnova iz svih relevantnih izvora (statistika, registri, prostorni podaci).")
     with col_p2:
-        st.markdown("**2. Znanje**  \nDaje podacima značenje povezivanjem sa ciljevima i lokalnim kontekstom.")
+        st.markdown("#### 2. Znanje\nDaje podacima značenje povezivanjem sa ciljevima i lokalnim kontekstom.")
     with col_p3:
-        st.markdown("**3. Analitika**  \nPretvara podatke u kompozitne indikatore i uzročno-posledične modele.")
+        st.markdown("#### 3. Analitika\nPretvara podatke u kompozitne indikatore i uzročno-posledične modele.")
     with col_p4:
-        st.markdown("**4. Veštačka Inteligencija**  \nProširuje analizu, prepoznaje skrivene obrasce i simulira scenarije.")
+        st.markdown("#### 4. AI Logika\nProširuje analizu, prepoznaje skrivene obrasce i simulira 'šta-ako' scenarije.")
     with col_p5:
-        st.markdown("**5. Ljudsko Iskustvo**  \nNezamenljivi završni element – čovek donosi konačnu odluku.")
+        st.markdown("#### 5. Čovek\nNezamenljivi završni element – čovek snosi etičku i stručnu odgovornost za odluku.")
 
-# ==================== PAGE 2: O PLATFORMI ====================
-elif page == "🌌 O Platformi COSMOS":
-    st.header("🌌 O Platformi COSMOS")
-    st.caption("Jedna platforma. Više oblasti odlučivanja. Jedinstvena metodologija.")
+# ==================== SECTION 2: SIMPA ====================
+with tab_simpa:
+    st.subheader("🤝 SIMPA – Sistem Inteligencije za Socijalnu Zaštitu i Inkluziju")
+    st.caption("Podaci. Znanje. Odluke. Rezultati.")
     
-    st.markdown("""
-    <div class="highlight-box">
-        <b>Filozofska osnova:</b> Naziv <i>COSMOS</i> potiče od latinske i antičke grčke reči koja označava uređenu celinu, poredak i sklad u suprotnosti sa haosom. U tom izvornom značenju, kosmos označava razumljivu celinu u kojoj događaji nisu nasumični, već povezani odnosima koji se mogu otkriti i razumeti.
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.subheader("💡 Zašto nastaje COSMOS?")
     st.write("""
-    Savremene organizacije raspolažu ogromnim količinama podataka. Međutim, **paradoks našeg vremena jeste u tome što nikada nismo znali više, a često smo sigurni manje**. 
-    Količina informacija raste mnogo brže od naše sposobnosti da ih povežemo u smislenu celinu. 
-
-    COSMOS premošćuje taj jaz povezivanjem **naučnog znanja**, **empirijskih podataka** i **veštačke inteligencije** u jedinstven sistem podrške ljudskom odlučivanju.
+    **SIMPA** je specijalizovani alat platforme COSMOS namenjen planiranju, praćenju i evaluaciji lokalnih javnih politika u oblasti socijalne zaštite i inkluzije. 
+    Pretvara administrative podatke iz svakodnevnog rada centara za socijalni rad (CSR), SOZIS-a i opština u pouzdane indikatore i prediktivne scenarije.
     """)
     
-    st.subheader("🏗️ Metodološki tok nastanka znanja")
+    st.markdown("### 📊 LISI – Lokalni Indeks Socijalne Inkluzije")
+    st.write("Metodološki instrument koji objedinjuje 6 ključnih dimenzija u jedinstvenu ocenu razvijenosti socijalne zaštite:")
     
-    steps_df = pd.DataFrame({
-        "Faza": ["1. Definisati problem", "2. Integracija izvora", "3. Poslovni indikatori", "4. Analitičko modelovanje", "5. Prediktivna logika", "6. Sinteza znanja", "7. Podrška odlučivanju"],
-        "Opis": [
-            "Problem određuje analizu – postavljanje jasnog cilja.",
-            "Objedinjavanje podataka (statistika, registri, AI, prostorni podaci).",
-            "Pretvaranje podataka u merljive i uporedive pokazatelje.",
-            "Otkrivanje uzročno-posledičnih veza i razvojnih obrazaca.",
-            "Simulacija 'šta-ako' scenarija i procena verovatnoća.",
-            "Integracija svih nalaza u celovitu sliku.",
-            "Jasne, objašnjive preporuke za donosioce odluka."
-        ]
+    df_lisi = pd.DataFrame({
+        "Dimenzija": [
+            "1. Socijalne potrebe stanovništva",
+            "2. Dostupnost i razvijenost usluga",
+            "3. Obuhvat građana sistemom",
+            "4. Kvalitet i rezultati usluga",
+            "5. Efikasnost upravljanja resursima",
+            "6. Razvojni kapacitet sistema"
+        ],
+        "Značaj (%)": [20, 20, 15, 15, 15, 15]
     })
-    st.table(steps_df)
+    fig_lisi = px.pie(df_lisi, values="Značaj (%)", names="Dimenzija", title="Dimenzije LISI Indeksa", color_discrete_sequence=px.colors.sequential.Tealgrn)
+    fig_lisi.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e0e1dd")
+    st.plotly_chart(fig_lisi, use_container_width=True)
 
-# ==================== PAGE 3: SIMPA ====================
-elif page == "🤝 SIMPA (Socijalna Inkluzija)":
-    st.header("🤝 SIMPA – Sistem Inteligencije za Socijalnu Zaštitu i Inkluziju")
-    st.markdown("*Podaci. Znanje. Odluke. Rezultati.*")
-    
-    tab1, tab2, tab3, tab4 = st.tabs(["📌 Pregled & Vrednosti", "📊 LISI Indeks", "⚙️ SOZIS Nadogradnja", "📦 Paketi Usluga"])
-    
-    with tab1:
-        st.subheader("Šta je SIMPA?")
-        st.write("""
-        **SIMPA** je specijalizovani alat platforme COSMOS namenjen planiranju, praćenju i evaluaciji lokalnih javnih politika u oblasti socijalne zaštite i inkluzije. 
-        Pretvara administrative podatke iz svakodnevnog rada centara za socijalni rad, ustanova i opština u pouzdane indikatore i razvojne projekcije.
-        """)
-        
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            st.markdown("#### 💚 Društvena Vrednost")
-            st.caption("Dostupnije i kvalitetnije usluge za svakog građanina.")
-        with c2:
-            st.markdown("#### 🏛️ Profesionalna Vrednost")
-            st.caption("Manje administracije, jača stručna podrška za CSR.")
-        with c3:
-            st.markdown("#### 📈 Razvojna Vrednost")
-            st.caption("Planiranje usluga tamo gde su potrebe najveće.")
-        with c4:
-            st.markdown("#### 💶 Finansijska Vrednost")
-            st.caption("Veći efekat ulaganja (15-30% više efikasnosti).")
-            
-    with tab2:
-        st.subheader("📊 LISI – Lokalni Indeks Socijalne Inkluzije")
-        st.write("LISI predstavlja jedinstveni metodološki instrument koji objedinjuje 6 ključnih dimenzija razvoja:")
-        
-        dims = {
-            "Dimenzija": ["1. Socijalne potrebe stanovništva", "2. Dostupnost i razvijenost usluga", "3. Obuhvat građana sistemom", "4. Kvalitet i rezultati usluga", "5. Efikasnost upravljanja resursima", "6. Razvojni kapacitet sistema"],
-            "Udeo u indeksu (%)": [20, 20, 15, 15, 15, 15]
-        }
-        df_lisi = pd.DataFrame(dims)
-        
-        fig = px.pie(df_lisi, values="Udeo u indeksu (%)", names="Dimenzija", title="Struktura LISI Indeksa", color_discrete_sequence=px.colors.sequential.Tealgrn)
-        fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e0e1dd")
-        st.plotly_chart(fig, use_container_width=True)
-        
-    with tab3:
-        st.subheader("🔄 Odnos SOZIS i SIMPA")
-        st.write("""
-        * **SOZIS**: Operativni informacioni sistem (prikuplja i čuva administrativne podatke, vodi evidencije i predmete).
-        * **SIMPA**: Strateški sistem inteligencije (pretvara SOZIS podatke u indikatore, analitičke modele, simulative scenarije i strateške odluke).
-        """)
-        st.success("SOZIS obezbeđuje podatke ➡️ SIMPA iz njih razvija znanje za upravljanje!")
+    st.markdown("### 🔄 Odnos SOZIS i SIMPA")
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
+        st.info("**SOZIS (Operativni nivo)**: Prikuplja i čuva administrativne podatke, vodi pojedinačne predmete i elektronske evidencije.")
+    with col_s2:
+        st.success("**SIMPA (Strateški nivo)**: Pretvara SOZIS podatke u indikatore, analitičke modele, prediktivne scenarije i strateške odluke.")
 
-    with tab4:
-        st.subheader("📦 Paketi Implementacije SIMPA")
-        p1, p2, p3, p4 = st.columns(4)
-        with p1:
-            st.markdown("**Paket I: Osnovna analiza**  \n- Trajanje: 6-8 nedelja  \n- Orijentaciono: 15k-20k EUR  \n- Osnovni dashboard & LISI")
-        with p2:
-            st.markdown("**Paket II: Planiranje razvoja**  \n- Trajanje: 2-3 meseca  \n- Orijentaciono: 30k-40k EUR  \n- 300+ indikatora & projekcije")
-        with p3:
-            st.markdown("**Paket III: Inteligentno upravljanje**  \n- Trajanje: 3-5 meseci  \n- Orijentaciono: 50k-70k EUR  \n- AI analitika & CSR dashboard")
-        with p4:
-            st.markdown("**Paket IV: Nacionalni sistem**  \n- Trajanje: 6-9 meseci  \n- Orijentaciono: 80k-150k EUR  \n- GIS analitika & SOZIS sinhronizacija")
+    st.markdown("### 📦 Paketi Implementacije za Lokalne Samouprave")
+    pk1, pk2, pk3, pk4 = st.columns(4)
+    with pk1:
+        st.markdown("**Paket I: Osnovna Analiza**  \n• Trajanje: 6–8 nedelja  \n• LISI indeks & socijalna mapa  \n• Osnovni komandni dashboard")
+    with pk2:
+        st.markdown("**Paket II: Planiranje Razvoja**  \n• Trajanje: 2–3 meseca  \n• 300+ indikatora  \n• Projekcija buduće tražnje usluga")
+    with pk3:
+        st.markdown("**Paket III: Inteligentno Upravljanje**  \n• Trajanje: 3–5 meseci  \n• 500+ indikatora  \n• AI analitika & CSR dashboard")
+    with pk4:
+        st.markdown("**Paket IV: Nacionalni Sistem**  \n• Trajanje: 6–9 meseci  \n• 1000+ indikatora  \n• GIS analitika & SOZIS integracija")
 
-# ==================== PAGE 4: ORDO ====================
-elif page == "🏔️ ORDO (Razvoj Destinacija)":
-    st.header("🏔️ ORDO – Razvoj i Upravljanje Turističkim Destinacijama")
-    st.markdown("*Podaci. Znanje. Razvoj. Destinacija.*")
+# ==================== SECTION 3: ORDO ====================
+with tab_ordo:
+    st.subheader("🏔️ ORDO – Razvoj i Upravljanje Turističkim Destinacijama")
+    st.caption("Podaci. Znanje. Razvoj. Destinacija.")
     
-    st.markdown("""
-    **ORDO** (od latinske reči za red, poredak i sklad) objedinjuje podatke, analitiku, veštačku inteligenciju i stručno iskustvo u sistem inteligencije odlučivanja za održivi razvoj opština, gradova i turističkih regija.
+    st.write("""
+    **ORDO** (od latinske reči za red, poredak i sklad) objedinjuje podatke o prostoru, turizmu, lokalnoj privredi, infrastrukturi i kulturnom nasleđu radi donošenja održivih i merljivih investicionih i razvojnih odluka.
     """)
     
-    st.subheader("🗺️ Put od podataka do razvoja – Životni ciklus strategije")
+    st.markdown("### 🗺️ Životni Ciklus Strategije Turizma u 7 Koraka")
     
-    ordo_steps = [
-        "1. Upoznaj destinaciju (Prikupljanje podataka o prostoru, kulturi, privredi, demografiji)",
-        "2. Otkrij potencijale (Identifikovanje autentičnih i inkluzivnih lokalnih resursa)",
-        "3. Razumi odnose (Analiza uzročno-posledičnih veza ekonomije i zaštite sredine)",
-        "4. Razvij scenarije (Modelovanje održivih razvojnih opcija)",
-        "5. Izaberi pravac (Donosioci odluka biraju optimalni scenario)",
-        "6. Oblikuj strategiju (Konkretan plan realizacije i merljivi ciljevi)",
-        "7. Prati i uči (Kontinuirana evaluacija i unapređenje)"
+    steps = [
+        ("1. Upoznaj destinaciju", "Prikupljanje i povezivanje podataka o prostoru, ljudima, privredi i infrastrukturnim kapacitetima."),
+        ("2. Otkrij potencijale", "Prepoznavanje autentičnih i inkluzivnih lokalnih resursa, zanatlija i porodičnih gazdinstava."),
+        ("3. Razumi odnose", "Dubinsko razumevanje uzročno-posledičnih veza ekonomije, društva i zaštite životne sredine."),
+        ("4. Razvij scenarije", "Modelovanje više održivih razvojnih opcija i procena njihovih efekata pre primene."),
+        ("5. Izaberi razvojni pravac", "Donosioci odluka biraju scenario koji najbolje odgovara razvojnoj viziji destinacije."),
+        ("6. Oblikuj strategiju", "Pretvaranje izabranog pravca u konkretan plan sa merljivim indikatorima i projektima."),
+        ("7. Prati razvoj i uči", "Kontinuirano merenje ostvarenih rezultata u odnosu na planirane i prilagođavanje novim ciklusu.")
     ]
-    for step in ordo_steps:
-        st.markdown(f"✅ **{step}**")
+    
+    for title, desc in steps:
+        st.markdown(f"✅ **{title}** — *{desc}*")
 
-# ==================== PAGE 5: NAČELA & STANDARDI ====================
-elif page == "📜 10 Načela & Standardi":
-    st.header("📜 10 Načela COSMOS Platforme")
+# ==================== SECTION 4: 10 NAČELA ====================
+with tab_principles:
+    st.subheader("📜 10 Načela Platforme COSMOS")
+    st.write("Svaka analiza i alat u okviru platforme COSMOS zasniva se na istim metodološkim i etičkim pravilima:")
     
     principles = [
-        ("1. Razumevanje prethodi odlučivanju", "Podaci su opis, a značenje nastaje tek kada se činjenice stope u kontekst."),
-        ("2. Inteligencija nastaje povezivanjem znanja", "Spajanje naučnog znanja, empirije i veštačke inteligencije."),
-        ("3. Čovek snosi odgovornost za odluke", "AI daje procene i scenarije, ali konačni izbor i etička odgovornost pripadaju čoveku."),
-        ("4. Svaka preporuka mora biti objašnjiva", "Ne postoje 'crne kutije' – svaka preporuka je proverljiva i prozirna."),
-        ("5. Društvo i tržište čine jedinstven sistem", "Javne politike, ekonomija i demografija deluju u međusobnoj sprezi."),
-        ("6. Složenost je izvor znanja", "Svet se ne pojednostavljuje veštački, već se u njegovoj složenosti otkrivaju obrasci."),
-        ("7. Dokazi imaju prednost nad pretpostavkama", "Intuicija dobija pravu snagu kada se utemelji u proverljivim podacima."),
-        ("8. Tehnologija razvija ljudske sposobnosti", "Cilj je osnaživanje donosilaca odluka, a ne njihova zamena."),
-        ("9. Poverenje je temelj svakog alata", "Poverenje se gradi doslednošću, transparentnošću i proverljivošću."),
-        ("10. Red u haosu nije cilj, već trajni proces", "Svet se neprestano menja, pa je razumevanje kontinuirani rad.")
+        ("1. Razumevanje prethodi odlučivanju", "Svaka odluka počinje pokušajem da se razume stvarnost. Podaci predstavljaju njen opis, a značenje nastaje tek kada se činjenice povežu u kontekst."),
+        ("2. Inteligencija nastaje povezivanjem znanja", "COSMOS razvija inteligenciju odlučivanja povezivanjem naučnog znanja, empirijskih podataka i mogućnosti veštačke inteligencije."),
+        ("3. Čovek snosi odgovornost za odluke", "Konačna odluka uvek pripada čoveku. Naši sistemi nikada nisu projektovani da odlučuju umesto ljudi, već da ljudima omoguće bolje odlučivanje."),
+        ("4. Svaka preporuka mora biti objašnjiva", "Poverenje proizlazi iz razumljivosti. Korisnik mora znati zbog čega je sistem došao do određene preporuke – ne postoje 'crne kutije'."),
+        ("5. Društvo i tržište čine jedinstven sistem", "Javne politike, demografski trendovi, regulatorni okvir i ekonomsko ponašanje čine jedinstven sistem međusobno povezanih odnosa."),
+        ("6. Složenost je izvor znanja", "Svet nije moguće svesti na nekoliko jednostavnih pokazatelja. COSMOS tehnologija pomaže da se u složenosti prepoznaju obrasci koji omogućavaju odgovornije odluke."),
+        ("7. Dokazi imaju prednost nad pretpostavkama", "Intuicija i iskustvo postaju pouzdaniji kada su zasnovani na proverljivim činjenicama. Svaki model i preporuka moraju biti utemeljeni u dokazima."),
+        ("8. Tehnologija razvija ljudske sposobnosti", "Napredak nije cilj sam po sebi. Veštačka inteligencija treba da povećava ljudske sposobnosti i osnažuje institucije, a ne da ih zamenjuje."),
+        ("9. Poverenje je temelj svakog alata", "Poverenje se gradi doslednošću, transparentnošću i odgovornošću. Zato je poverenje najvažniji rezultat koji želimo da ostvarimo kod korisnika."),
+        ("10. Red u haosu nije cilj, već trajni proces", "Društvo, tržište i tehnologija neprestano se menjaju. COSMOS omogućava da se svet iznova razume i da se odluke donose na osnovu najboljeg raspoloživog znanja.")
     ]
     
     for title, desc in principles:
         with st.expander(f"📌 {title}"):
             st.write(desc)
 
-# ==================== PAGE 6: TIM & EKOSISTEM ====================
-elif page == "👥 Tim & Ekosistem":
-    st.header("👥 Tim koji je stvorio COSMOS")
-    st.write("Velike platforme ne grade algoritmi. Grade ih ljudi koji veruju u istu ideju.")
+# ==================== SECTION 5: TIM & VIZIJA ====================
+with tab_team:
+    st.subheader("👥 Tim koji je stvorio COSMOS")
+    st.markdown("*Velike platforme ne grade algoritmi. Grade ih ljudi koji veruju u istu ideju.*")
     
-    t1, t2 = st.columns(2)
-    with t1:
+    col_t1, col_t2 = st.columns(2)
+    with col_t1:
         st.markdown("""
         <div class="cosmos-card">
-            <div class="card-title">Dr Goran Bašić</div>
+            <div class="card-title-cyan">Dr Goran Bašić</div>
             <p><b>Idejni tvorac platforme COSMOS</b></p>
-            <p>Autor metodologije i vizije. Više od 25 godina istraživanja odnosa između društvenih procesa, javnih politika i odlučivanja.</p>
+            <p>Autor metodologije i vizije. Više od 25 godina istraživanja odnosa između društvenih procesa, javnih politika i donošenja odluka. Razvio je koncept inteligentnog odlučivanja koji povezuje društvene nauke, indikatore i AI.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div class="cosmos-card">
-            <div class="card-title">Lana Rašković</div>
+            <div class="card-title-cyan">Lana Rašković</div>
             <p><b>Menadžerka sistema</b></p>
-            <p>Brine o operativnom funkcionisanju sistema, organizaciji procesa, koordinaciji implementacije i podršci korisnicima.</p>
+            <p>Brine o operativnom funkcionisanju sistema, organizaciji procesa, koordinaciji implementacije i podršci korisnicima, obezbeđujući dostupnost i primenljivost metodoloških rešenja.</p>
         </div>
         """, unsafe_allow_html=True)
 
-    with t2:
+    with col_t2:
         st.markdown("""
         <div class="cosmos-card">
-            <div class="card-gold-title">Dr Branislav Radomirović</div>
+            <div class="card-title-gold">Dr Branislav Radomirović</div>
             <p><b>Glavni arhitekta sistema</b></p>
-            <p>Pretvorio je metodološku ideju u funkcionalnu tehnološku platformu, projektujući analitičke module i napredne softverske arhitekture.</p>
+            <p>Pretvorio je metodološku ideju u funkcionalnu tehnološku platformu. Njegov doprinos ogleda se u razvoju arhitekture sistema, projektovanju analitičkih modula i spajanju metodologije sa softverskim rešenjima.</p>
         </div>
         """, unsafe_allow_html=True)
 
         st.markdown("""
         <div class="cosmos-card">
-            <div class="card-gold-title">Maja Anđelković</div>
+            <div class="card-title-gold">Maja Anđelković</div>
             <p><b>Projektna menadžerka</b></p>
-            <p>Koordinira istraživački tim, razvojne partnere i međunarodnu saradnju, obezbeđujući planski i dosledan razvoj.</p>
+            <p>Koordinirala je razvojni proces, povezujući istraživački tim, partnere i korisnike platforme. Obezbeđuje da se razvoj COSMOS-a odvija planski, dosledno i po najvišim standardima upravljanja.</p>
         </div>
         """, unsafe_allow_html=True)
 
-# ==================== PAGE 7: INTERAKTIVNI SIMULATORI ====================
-elif page == "🧮 Interaktivni Simulatori":
-    st.header("🧮 Interaktivni Simulatori Inteligencije Odlučivanja")
-    st.caption("Isprobajte democikle odlučivanja za SIMPA i ORDO modele.")
+# ==================== SECTION 6: KONTAKT & DEMO ====================
+with tab_contact:
+    st.markdown("<a id='kontakt'></a>", unsafe_allow_html=True)
+    st.subheader("✉️ Zatražite Prezentaciju i Demo Platforme COSMOS")
+    st.write("Zainteresovani ste za primenu SIMPA ili ORDO alata u Vašoj jedinici lokalne samouprave, ministarstvu ili organizaciji?")
     
-    sim_type = st.radio("Izaberite simulator:", ["🤝 SIMPA: Efekat ulaganja u socijalnu zaštitu", "🏔️ ORDO: Turistički i ekonomski scenario destinacije"], horizontal=True)
-    
-    if "SIMPA" in sim_type:
-        st.subheader("📊 SIMPA Simulator društvenog i finansijskog učinka")
-        budget = st.slider("Godišnji budžet opštine za socijalnu zaštitu (€)", 100000, 5000000, 800000, step=50000)
-        population = st.number_input("Broj stanovnika opštine", 10000, 500000, 50000)
+    with st.form("demo_form"):
+        f_name = st.text_input("Ime i prezime / Funkcija")
+        f_org = st.text_input("Naziv institucije / Opštine / Organizacije")
+        f_email = st.text_input("Službena email adresa")
+        f_module = st.selectbox("Oblast interesovanja", [
+            "COSMOS Platforma (Opšta prezentacija)",
+            "SIMPA (Socijalna zaštita, inkluzija & SOZIS integracija)",
+            "ORDO (Održivi razvoj turističkih destinacija)",
+            "Strateško savetovanje i analitika javnih politika"
+        ])
+        f_msg = st.text_area("Dodatne informacije / Specifični zahtevi")
         
-        # Calculation based on SIMPA whitepaper (15-30% value return)
-        min_eff = budget * 0.15
-        max_eff = budget * 0.30
-        avg_eff = (min_eff + max_eff) / 2
-        
-        st.markdown("---")
-        col_m1, col_m2, col_m3 = st.columns(3)
-        with col_m1:
-            st.metric("Godišnja izdvajanja po stanovniku", f"€{budget/population:.2f}")
-        with col_m2:
-            st.metric("Procenjena oslobođena vrednost (Min)", f"€{min_eff:,.0f}")
-        with col_m3:
-            st.metric("Procenjena oslobođena vrednost (Max)", f"€{max_eff:,.0f}")
-            
-        st.success(f"Primena SIMPA platforme u opštini sa {population:,} stanovnika može osloboditi **€{min_eff:,.0f} do €{max_eff:,.0f}** dodate vrednosti bez smanjenja obima usluga!")
+        btn_submit = st.form_submit_button("Pošalji Upit za Demo")
+        if btn_submit:
+            st.success("Hvala Vam na interesovanju! Stručni tim COSMOS platforme će Vam odgovoriti u najkraćem roku.")
 
-        # Chart
-        df_sim = pd.DataFrame({
-            "Kategorija": ["Efikasnije planiranje budžeta (5%)", "Razvoj inkluzivnih usluga (4%)", "Upravljanje kapacitetima (3%)", "Automatizacija administracije (3%)"],
-            "Procjena uštede/efekta (€)": [budget*0.05, budget*0.04, budget*0.03, budget*0.03]
-        })
-        fig_sim = px.bar(df_sim, x="Kategorija", y="Procjena uštede/efekta (€)", color="Kategorija", title="Struktura ostvarenih efekata po oblastima")
-        fig_sim.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e0e1dd", showlegend=False)
-        st.plotly_chart(fig_sim, use_container_width=True)
-
-    else:
-        st.subheader("🏔️ ORDO Scenario Razvoja Destinacije")
-        tourists = st.slider("Trenutni godišnji broj turista", 5000, 500000, 50000)
-        invest = st.slider("Planirane investicije u infrastrukturu i kulturu (€)", 50000, 2000000, 300000)
-        
-        est_growth = (invest / 100000) * 1.5
-        new_tourists = int(tourists * (1 + est_growth/100))
-        
-        st.markdown("---")
-        c_o1, c_o2 = st.columns(2)
-        with c_o1:
-            st.metric("Očekivani rast turističkog prometa", f"+{est_growth:.1f}%")
-        with c_o2:
-            st.metric("Procenjeni novi godišnji broj posetilaca", f"{new_tourists:,}")
-
-# ==================== PAGE 8: KONTAKT ====================
-elif page == "✉️ Kontakt & Demo":
-    st.header("✉️ Kontaktirajte COSMOS Tim")
-    st.write("Zainteresovani ste za primenu SIMPA ili ORDO alata u Vašoj jedinici lokalne samouprave ili organizaciji?")
-    
-    with st.form("contact_form"):
-        name = st.text_input("Ime i prezime / Organizacija")
-        email = st.text_input("Email adresa")
-        interest = st.selectbox("Zainteresovani ste za:", ["COSMOS Platforma (Opšte)", "SIMPA (Socijalna inkluzija & SOZIS)", "ORDO (Razvoj turističkih destinacija)", "Međunarodna saradnja / Partnerstvo"])
-        message = st.text_area("Poruka / Upit za demo")
-        
-        submitted = st.form_submit_request if hasattr(st, 'form_submit_request') else st.form_submit_button("Pošalji Upit")
-        
-        if submitted:
-            st.success("Hvala Vam na interesovanju! COSMOS tim će Vas kontaktirati u najkraćem roku.")
-            
-    st.divider()
-    st.markdown("📍 **COSMOS Platforma** | www.cosmos.rs")
+# Footer
+st.markdown("""
+<div class="footer">
+    <b>COSMOS Platforma</b> • Inteligencija za bolje odluke<br>
+    Znanje • Razumevanje • Odgovornost • Bolje Odluke • Bolja Budućnost<br>
+    © 2026 COSMOS • <a href="http://www.cosmos.rs" style="color: #48cae4;">www.cosmos.rs</a>
+</div>
+""", unsafe_allow_html=True)
