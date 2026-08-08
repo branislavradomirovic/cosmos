@@ -1,21 +1,34 @@
-# 🌌 COSMOS Platform – Streamlit Web Application
+# 🌌 COSMOS Platform – Professional Landing Page & App
 
-This repository contains the official landing page and interactive decision-intelligence simulator web app for the **COSMOS Platform** (including **SIMPA** and **ORDO** modules).
+Ovaj repozitorijum sadrži dva glavna dela COSMOS platforme:
+1. **Zvaničnu Landing Stranicu (Static Site)** - Profesionalna prezentacija COSMOS platforme, SIMPA i ORDO modula.
+2. **Interaktivnu Streamlit Aplikaciju** - Analitički alati, kalkulatori i simulatori odluka.
 
 ---
 
-## 🚀 Local Running Instructions
+## 🚀 Pokretanje Landing Stranice (Novo)
 
-### 1. Prerequisites
+Nova profesionalna landing stranica nalazi se u folderu `site/`. S obzirom da je reč o statičkoj HTML/CSS/JS stranici, pokretanje je izuzetno jednostavno:
+
+1. Otvorite folder `site/`.
+2. Dvostrukim klikom otvorite fajl `index.html` u bilo kom modernom pretraživaču (Chrome, Firefox, Safari).
+
+*Nije potrebno instalirati server niti pokretati Python skripte za pregled landing stranice.*
+
+---
+
+## 📊 Pokretanje Streamlit Aplikacije (Interaktivni alati)
+
+### 1. Preduslovi
 Ensure you have Python 3.9+ installed on your system.
 
-### 2. Install Dependencies
+### 2. Instalacija zavisnosti
 Open your terminal in this directory and run:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Launch Streamlit App
+### 3. Pokretanje Streamlit Aplikacije
 Run the following command:
 ```bash
 streamlit run app.py
