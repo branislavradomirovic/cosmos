@@ -1,0 +1,58 @@
+<!doctype html><html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COSMOS — Design details</title><link rel="stylesheet" href="assets/css/style.css"></head><body>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html"><img src="assets/img/core_brand.png" alt="COSMOS"></a>
+    <nav class="nav-links">
+      <a href="index.html#platforma">Platforma</a>
+      <a href="simpa.html">SIMPA</a>
+      <a href="ordo.html">ORDO</a>
+      <a href="cosmos.html">Metodologija</a>
+      <a class="btn btn-primary" href="index.html#ekosistem">Upoznajte platformu</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="detail-hero">
+ <div class="container wrap">
+  <div><div class="eyebrow">Design reference</div><h1 style="font-size:86px">DETAILS</h1><p class="statement">Vizuelna pravila koja Codex treba da nasledi — ne samo sadržaj.</p><p class="copy">Ovaj fajl nije javna stranica. On služi kao „design system lite“: paleta, tipografija, spacing, kartice, sekcije i jasne zabrane koje sprečavaju da rezultat ponovo izgleda kao generički Streamlit dashboard.</p></div>
+  <div class="brand-card"><img src="assets/img/core_brand.png" alt="COSMOS brand"></div>
+ </div>
+</section>
+<section class="section white">
+ <div class="container">
+  <div class="section-title"><div><div class="kicker">Paleta</div><h2>Jedna platforma, tri vizuelna glasa.</h2></div><p>COSMOS je neutralno-zeleni metodološki core. SIMPA dobija teal, ORDO zlatni akcenat, ali oba zadržavaju isti prostor, tipografiju, geometriju i kvalitet završne obrade.</p></div>
+  <div class="design-grid">
+   <div class="design-card"><h3>COSMOS core</h3><p>Warm white, forest green, fresh green, dark ink.</p><div class="palette"><div class="color" style="background:#f6f7f3"></div><div class="color" style="background:#ffffff"></div><div class="color" style="background:#0c231d"></div><div class="color" style="background:#0b5a46"></div><div class="color" style="background:#6ab64a"></div><div class="color" style="background:#e8f2ec"></div></div></div>
+   <div class="design-card"><h3>SIMPA</h3><p>Deep navy + teal/cyan, bez svetle „startup“ plave.</p><div class="palette"><div class="color" style="background:#0a2d59"></div><div class="color" style="background:#0b9c9a"></div><div class="color" style="background:#e6f6f5"></div><div class="color" style="background:#f6f7f3"></div><div class="color" style="background:#ffffff"></div><div class="color" style="background:#415a66"></div></div></div>
+   <div class="design-card"><h3>ORDO</h3><p>Deep navy + muted premium gold.</p><div class="palette"><div class="color" style="background:#0a2d59"></div><div class="color" style="background:#c59a3b"></div><div class="color" style="background:#f7f0df"></div><div class="color" style="background:#f6f7f3"></div><div class="color" style="background:#ffffff"></div><div class="color" style="background:#415a66"></div></div></div>
+  </div>
+ </div>
+</section>
+<section class="section">
+ <div class="container">
+  <div class="section-title"><div><div class="kicker">Kompozicija</div><h2>Editorial sekcije umesto zida kartica.</h2></div><p>Svaka sekcija treba da ima jasno pitanje, jednu dominantnu poruku i tek potom vizuelnu strukturu. Kartice koristiti samo kada sadržaj zaista zahteva poređenje.</p></div>
+  <div class="patterns">
+   <div class="pattern-demo"><div class="kicker">Primer sekcije</div><h2 style="font-size:44px;max-width:620px">Veliki naslov koji nosi ideju.</h2><p style="max-width:650px;color:#64766e">Jedan do dva pasusa objašnjenja. Dosta praznog prostora. Precizna linija i ograničen broj akcenata.</p></div>
+   <div class="pattern-demo"><div class="orbit" style="width:230px;height:230px;position:relative;left:50%;top:50%;transform:translate(-50%,-50%)"></div></div>
+  </div>
+ </div>
+</section>
+<section class="section white">
+ <div class="container">
+  <div class="section-title"><div><div class="kicker">Guardrails</div><h2>Šta Codex mora da radi — i šta ne sme.</h2></div><p>Cilj je da implementacija zadrži osećaj ozbiljne platforme čak i kada je runtime Streamlit.</p></div>
+  <div class="do-dont">
+   <div class="do"><h3>DA</h3><p>White space, sticky nav, editorial hierarchy, CSS/SVG geometrija, ozbiljna tipografija, lokalni brand asseti, responsive layout, jedan javni entrypoint.</p></div>
+   <div class="dont"><h3>NE</h3><p>Emoji, st.info/st.metric estetika, default Streamlit sidebar, tamni dashboard theme, Plotly demo grafikoni, generički AI neon, fake funkcionalnosti, multipage aplikacije u V1.</p></div>
+  </div>
+ </div>
+</section>
+</main>
+<footer class="footer">
+  <div class="container footer-inner">
+    <div><strong>COSMOS</strong> &nbsp; Platforma inteligencije odlučivanja</div>
+    <div>SIMPA · ORDO · www.cosmos.rs · © 2026 COSMOS</div>
+  </div>
+</footer>
+</body></html>
